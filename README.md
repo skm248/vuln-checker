@@ -21,7 +21,7 @@
 
 ## Installation
 
-Install via pip (after publishing):
+Install via pip:
 
 ```bash
 pip install vuln-checker
