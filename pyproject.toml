@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vuln-checker"
+version = "0.1.0"
+description = "CLI tool to fetch CVEs using NVD API"
+authors = [{ name = "Sai Krishna Meda", email = "saikrishnameda248@outlook.com" }]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+dependencies = ["requests"]
+
+[project.scripts]
+vuln-checker = "vuln_checker.main:main"
+
+[tool.setuptools]
+packages = ["vuln_checker"]

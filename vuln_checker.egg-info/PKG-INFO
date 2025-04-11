@@ -1,0 +1,78 @@
+Metadata-Version: 2.4
+Name: vuln-checker
+Version: 0.1.0
+Summary: CLI tool to fetch CVEs using NVD API
+Author-email: Sai Krishna Meda <you@example.com>
+License-Expression: MIT
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests
+Dynamic: license-file
+
+# vuln-checker
+
+[![PyPI version](https://img.shields.io/pypi/v/vuln-checker?color=brightgreen)](https://pypi.org/project/vuln-checker/)
+[![Python version](https://img.shields.io/pypi/pyversions/vuln-checker)](https://pypi.org/project/vuln-checker/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/skm248/vuln-checker?style=social)](https://github.com/skm248/vuln-checker/stargazers)
+
+> ✨ A CLI tool to search CVEs from the NVD API based on product/version (CPE lookup).
+
+---
+
+## Features
+
+- 🎯 Interactive mode to resolve multiple CPE matches
+- 📂 Batch mode to scan multiple products via CSV
+- 🔍 Filter CVEs by severity
+- 💾 JSON/CSV output support
+- ⚡ Caches results for faster repeated queries
+
+---
+
+## Installation
+
+Install via pip (after publishing):
+
+```bash
+pip install vuln-checker
+```
+
+Or from GitHub (after cloning):
+
+```bash
+git clone https://github.com/skm248/vuln-checker.git
+cd vuln-checker
+pip install .
+```
+
+---
+
+## Usage
+
+### Single Product
+
+```bash
+vuln-checker --product jquery --version 1.11.3 --severity HIGH
+```
+
+### Batch Mode (CSV)
+
+```bash
+vuln-checker --batch products.csv --output results.json
+```
+
+**CSV format:**
+
+```csv
+product,version
+jquery,1.11.3
+lodash,3.5.0
+```
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE) by Sai Krishna Meda.
