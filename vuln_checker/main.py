@@ -1,13 +1,20 @@
-import argparse
 import requests
 import json
 import csv
 import os
 import gzip
 import shutil
+import logging
+import jinja2
+import rich
+
+logging.basicConfig(level=logging.WARNING)
 
 from pathlib import Path
-from argparse import RawDescriptionHelpFormatter
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
+
+from jinja2 import Environment, FileSystemLoader
+from collections import Counter
 
 NVD_API_BASE = "https://services.nvd.nist.gov/rest/json"
 CPE_API = f"{NVD_API_BASE}/cpes/2.0"
@@ -99,72 +106,84 @@ def output_results(cves, output_format="json", output_file=None):
         print(f"✅ CSV results written to {output_file or 'output.csv'} with Excel HYPERLINK formulas.")
 
 
+def generate_html_report(cves, output_file="report.html"):
+    from collections import Counter
+    from jinja2 import Environment, FileSystemLoader
+
+    env = Environment(loader=FileSystemLoader("."))
+    template = env.get_template("template.html")
+
+    rows = []
+    severity_counter = Counter()
+
+    for cve in cves:
+        try:
+            cve_data = cve.get("cve", {})
+            cve_id = cve_data.get("id", "N/A")
+            url = f"https://nvd.nist.gov/vuln/detail/{cve_id}"
+
+            metrics = cve_data.get("metrics", {}).get("cvssMetricV31", [{}])[0]
+            cvss_data = metrics.get("cvssData", {})
+
+            severity = cvss_data.get("baseSeverity", "UNKNOWN")
+            score = cvss_data.get("baseScore", "N/A")
+
+            description = cve_data.get("descriptions", [{}])[0].get("value", "No description available.")
+            published = cve_data.get("published", "N/A")
+
+            severity_counter[severity] += 1
+
+            rows.append({
+                "id": cve_id,
+                "url": url,
+                "severity": severity,
+                "score": score,
+                "description": description,
+                "published": published
+            })
+
+        except Exception as e:
+            print(f"⚠️ Skipping malformed CVE entry: {e}")
+            continue
+
+    # Render HTML
+    html = template.render(cves=rows, severity_counts=severity_counter)
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print(f"📄 HTML report generated at {output_file}")
 
 
 def main():
-    # parser = argparse.ArgumentParser(
-    # description=textwrap.dedent("""\
-    # 🔍 vuln-checker: Search CVEs by CPE product/version
-
-    #     Features:
-    #     - Fetch matching CPEs using product & version
-    #     - Interactive selection if multiple CPEs found
-    #     - Pull CVEs from NVD (filter by severity)
-    #     - Export results in JSON or CSV
-    #     - Auto-download & manage official CPE dictionary
-
-    #     Example:
-    #       vuln-checker --product jquery --version 1.11.3 --severity HIGH --format csv
-    #       vuln-checker --product lodash --version 3.5.0 --refresh
-    # """)
-    # )
-
-#     parser = argparse.ArgumentParser(
-#     description=(
-#         "🔍 vuln-checker: Search CVEs by CPE product/version\n\n"
-#         "Features:\n"
-#         "- Fetch matching CPEs using product & version\n"
-#         "- Interactive selection if multiple CPEs found\n"
-#         "- Pull CVEs from NVD (filter by severity)\n"
-#         "- Export results in JSON or CSV\n"
-#         "- Auto-download & manage official CPE dictionary\n\n"
-#         "Example:\n"
-#         "  vuln-checker --product jquery --version 1.11.3 --severity HIGH --format csv\n"
-#         "  vuln-checker --product lodash --version 3.5.0 --refresh"
-#     )
-# )
-
-
-    parser = argparse.ArgumentParser(
-    description="""\
+    parser = ArgumentParser(
+        description="""\
 🔍 vuln-checker: Search CVEs by CPE product/version
 
 Features:
 - Fetch matching CPEs using product & version
 - Interactive selection if multiple CPEs found
 - Pull CVEs from NVD (filter by severity)
-- Export results in JSON or CSV
+- Export results in JSON, CSV, or HTML
 - Auto-download & manage official CPE dictionary
 
 Example:
   vuln-checker --product tomcat --version 9.0.46 --severity HIGH --format csv
   vuln-checker --product mysql --version 8.0.30 --refresh
 """,
-    formatter_class=RawDescriptionHelpFormatter
-)
-
+        formatter_class=RawDescriptionHelpFormatter
+    )
 
     parser.add_argument("--product", required=True, help="Product name (e.g., jquery)")
     parser.add_argument("--version", required=True, help="Product version (e.g., 1.11.3)")
     parser.add_argument("--severity", help="Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)")
-    parser.add_argument("--format", choices=["json", "csv"], default="json", help="Output format (default: json)")
+    parser.add_argument("--format", choices=["json", "csv", "html"], default="json", help="Output format (default: json)")
     parser.add_argument("--output", help="Output file name (default: print to terminal)")
     parser.add_argument(
         "--refresh", 
         action="store_true", 
         help="Force refresh of official CPE dictionary (re-download from NVD)"
     )
-
 
     args = parser.parse_args()
 
@@ -190,4 +209,7 @@ Example:
     print(f"\n🛡️ Fetching CVEs for {cpe_uri} ...\n")
     cves = fetch_cves(cpe_uri, severity=args.severity)
 
-    output_results(cves, args.format, args.output)
+    if args.format == "html":
+        generate_html_report(cves, output_file=args.output or "report.html")
+    else:
+        output_results(cves, args.format, args.output)

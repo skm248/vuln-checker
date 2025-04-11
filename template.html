@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<!-- jQuery (required) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+  <meta charset="UTF-8">
+  <title>Vuln Checker Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .sev-critical {
+      color: #91243E;
+      font-weight: bold;
+    }
+    .sev-high {
+      color: #DD4B50;
+      font-weight: bold;
+    }
+    .sev-medium {
+      color: #F18C43;
+      font-weight: bold;
+    }
+    .sev-low {
+      color: #F8C851;
+      font-weight: bold;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #chart-container {
+      width: 60vw;
+      height: 40vh;
+      margin-bottom: 80px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    /* Override only for CVE ID column */
+    #cveTable td:nth-child(1) {
+      min-width: 150px;
+      font-weight: bold;
+      color: #007bff; /* Optional: make it link-color styled */
+    }
+    th {
+      background-color: #eee;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 CVE Report</h1>
+
+  <div id="chart-container">
+    <canvas id="severityChart"></canvas>
+  </div>
+
+  <table id="cveTable">
+    <thead>
+      <tr>
+        <th>CVE ID</th>
+        <th>Severity</th>
+        <th>Score</th>
+        <th>Published</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cve in cves %}
+      <tr>
+        <td><a href="{{ cve.url }}" target="_blank">{{ cve.id }}</a></td>
+        <td class="sev-{{ cve.severity | lower }}" data-order="{% if cve.severity == 'CRITICAL' %}4{% elif cve.severity == 'HIGH' %}3{% elif cve.severity == 'MEDIUM' %}2{% elif cve.severity == 'LOW' %}1{% else %}0{% endif %}">
+          {{ cve.severity }}
+        </td>
+        <td>{{ cve.score }}</td>
+        <td>{{ cve.published }}</td>
+        <td>{{ cve.description }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>    
+  </table>
+
+  <script>
+    const data = {
+      labels: {{ severity_counts.keys() | list | tojson | safe }},
+      datasets: [{
+        label: 'Severity Distribution',
+        data: {{ severity_counts.values() | list | tojson | safe }},
+        backgroundColor: {{ severity_counts.keys() | map('lower') | list | tojson | safe }}.map(severity => {
+          switch (severity) {
+            case 'critical': return '#8B0000';   // Dark Red
+            case 'high':     return '#FF0000';   // Red
+            case 'medium':   return '#FFA500';   // Orange
+            case 'low':      return '#FFFF00';   // Yellow
+            default:         return '#999999';
+          }
+        })
+      }]
+    };
+  
+    new Chart(document.getElementById('severityChart'), {
+      type: 'pie',
+      data: data,
+    });
+  </script>
+
+<script>
+  $(document).ready(function() {
+    $('#cveTable').DataTable({
+      paging: true,
+      searching: true,
+      order: [[1, "desc"]],
+      columnDefs: [{
+        targets: '_all',
+        className: 'dt-head-center'
+      }]
+    });
+  });
+</script>
+</body>
+</html>

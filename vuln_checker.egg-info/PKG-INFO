@@ -1,8 +1,8 @@
 Metadata-Version: 2.4
 Name: vuln-checker
-Version: 0.1.0
+Version: 0.3.0
 Summary: CLI tool to fetch CVEs using NVD API
-Author-email: Sai Krishna Meda <you@example.com>
+Author-email: Sai Krishna Meda <saikrishnameda248@outlook.com>
 License-Expression: MIT
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
@@ -24,22 +24,21 @@ Dynamic: license-file
 ## Features
 
 - 🎯 Interactive mode to resolve multiple CPE matches
-- 📂 Batch mode to scan multiple products via CSV
 - 🔍 Filter CVEs by severity
-- 💾 JSON/CSV output support
+- 💾 JSON/CSV/HTML output support
 - ⚡ Caches results for faster repeated queries
 
 ---
 
 ## Installation
 
-Install via pip (after publishing):
+Install via pip:
 
 ```bash
 pip install vuln-checker
 ```
 
-Or from GitHub (after cloning):
+Or from GitHub:
 
 ```bash
 git clone https://github.com/skm248/vuln-checker.git
@@ -54,21 +53,8 @@ pip install .
 ### Single Product
 
 ```bash
-vuln-checker --product jquery --version 1.11.3 --severity HIGH
-```
-
-### Batch Mode (CSV)
-
-```bash
-vuln-checker --batch products.csv --output results.json
-```
-
-**CSV format:**
-
-```csv
-product,version
-jquery,1.11.3
-lodash,3.5.0
+vuln-checker --product tomcat --version 9.0.46 --severity HIGH --format csv
+vuln-checker --product mysql --version 8.0.30 --refresh
 ```
 
 ---

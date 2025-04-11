@@ -12,22 +12,21 @@
 ## Features
 
 - 🎯 Interactive mode to resolve multiple CPE matches
-- 📂 Batch mode to scan multiple products via CSV
 - 🔍 Filter CVEs by severity
-- 💾 JSON/CSV output support
+- 💾 JSON/CSV/HTML output support
 - ⚡ Caches results for faster repeated queries
 
 ---
 
 ## Installation
 
-Install via pip (after publishing):
+Install via pip:
 
 ```bash
 pip install vuln-checker
 ```
 
-Or from GitHub (after cloning):
+Or from GitHub:
 
 ```bash
 git clone https://github.com/skm248/vuln-checker.git
@@ -42,7 +41,8 @@ pip install .
 ### Single Product
 
 ```bash
-vuln-checker --product jquery --version 1.11.3 --severity HIGH
+vuln-checker --product tomcat --version 9.0.46 --severity HIGH --format csv
+vuln-checker --product mysql --version 8.0.30 --refresh
 ```
 
 ---
