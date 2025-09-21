@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vuln-checker"
+version = "0.5.2"
+description = "CLI tool to fetch CVEs using NVD API"
+authors = [{ name = "Sai Krishna Meda", email = "saikrishnameda248@outlook.com" }]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+keywords = ["cve", "vulnerability", "cli", "security", "nvd", "cpe"]
+
+dependencies = [
+    "charset-normalizer==3.4.1",
+    "idna==3.10",
+    "jinja2==3.1.6",
+    "markupsafe==3.0.2",
+    "packaging==25.0",
+    "requests==2.32.3",
+    "urllib3==1.26.20",
+    "certifi==2025.1.31",
+    "tomli>=2.0.1; python_version < '3.11'"
+]
+
+[project.scripts]
+vuln-checker = "vuln_checker.main:main"
+
+[tool.setuptools]
+packages = ["vuln_checker"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+vuln_checker = [
+  "products.csv",
+  "requirements.txt",
+  "/templates/*.html"
+]

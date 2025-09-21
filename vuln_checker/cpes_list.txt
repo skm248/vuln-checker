@@ -1,0 +1,2 @@
+cpe:2.3:a:apache:tomcat:9.0.70:*:*:*:*:*:*:*
+cpe:2.3:a:oracle:mysql:8.0.35:*:*:*:*:*:*:*

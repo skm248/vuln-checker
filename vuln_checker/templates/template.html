@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vuln Checker Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+
+  <style>
+    .sev-critical {
+      color: #91243E;
+      font-weight: bold;
+    }
+
+    .sev-high {
+      color: #DD4B50;
+      font-weight: bold;
+    }
+
+    .sev-medium {
+      color: #F18C43;
+      font-weight: bold;
+    }
+
+    .sev-low {
+      color: #F8C851;
+      font-weight: bold;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 6px 10px;
+      margin: 4px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+
+    .chip-critical {
+      background-color: #91243E;
+    }
+
+    .chip-high {
+      background-color: #DD4B50;
+    }
+
+    .chip-medium {
+      background-color: #F18C43;
+    }
+
+    .chip-low {
+      background-color: #F8C851;
+      color: black;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    #chart-container {
+      width: 60vw;
+      height: 40vh;
+      margin-bottom: 80px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 7px;
+      text-align: left;
+    }
+
+    #cveTable td:nth-child(2) {
+      min-width: 140px;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    th {
+      background-color: #eee;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    tr:hover td.sev-critical {
+      background-color: #ffebee;
+    }
+
+    tr:hover td.sev-high {
+      background-color: #fff3e0;
+    }
+
+    tr:hover td.sev-medium {
+      background-color: #fffde7;
+    }
+
+    tr:hover td.sev-low {
+      background-color: #f9fbe7;
+    }
+
+    .description-toggle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🔐 CVE Report</h1>
+
+  <div id="chart-container">
+    <canvas id="severityChart"></canvas>
+  </div>
+
+  <div id="activeFilters" style="margin-bottom: 10px;"></div>
+  <button id="clearFilterBtn" style="margin-bottom: 20px;">Clear Filter</button>
+
+  <table id="cveTable">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>CVE ID</th>
+        <th>Severity</th>
+        <th>Score</th>
+        <th>Published</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cve in cves %}
+      <tr>
+        <td>{{ cve.product }}</td>
+        <td><a href="{{ cve.url }}" target="_blank">{{ cve.id }}</a></td>
+        <td class="sev-{{ cve.severity | lower }}"
+          data-order="{% if cve.severity == 'CRITICAL' %}4{% elif cve.severity == 'HIGH' %}3{% elif cve.severity == 'MEDIUM' %}2{% elif cve.severity == 'LOW' %}1{% else %}0{% endif %}">
+          {{ cve.severity }}
+        </td>
+        <td>{{ cve.score }}</td>
+        <td>{{ cve.published }}</td>
+        <td>
+          <div class="description truncated" data-full-text="{{ cve.description | safe }}"
+            onclick="toggleDescription(this)">
+            {{ cve.description | truncate(200, true, '...') | safe }} <span class="toggle-link">More</span>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+
+    const data = {
+      labels: {{ severity_counts.keys() | list | tojson | safe }},
+    datasets: [{
+      label: 'Severity Distribution',
+      data: {{ severity_counts.values() | list | tojson | safe }},
+      backgroundColor: {{ severity_counts.keys() | map('lower') | list | tojson | safe }}.map(severity => {
+        switch (severity) {
+          case 'critical': return '#8B0000';
+          case 'high': return '#FF0000';
+          case 'medium': return '#FFA500';
+          case 'low': return '#FFFF00';
+          default: return '#999999';
+        }
+      })
+      }]
+    };
+
+    let activeFilters = [];
+
+    function updateFilterChips() {
+      const container = document.getElementById("activeFilters");
+      container.innerHTML = "";
+      activeFilters.forEach(label => {
+        const span = document.createElement("span");
+        span.textContent = " " + label;
+        span.className = "chip chip-" + label.toLowerCase();
+        span.title = "Click to remove " + label;
+
+        const icon = document.createElement("span");
+        icon.innerHTML = "&#10005;";
+        icon.style.marginRight = "6px";
+        icon.style.fontWeight = "bold";
+        span.prepend(icon);
+
+        span.onclick = () => {
+          activeFilters = activeFilters.filter(l => l !== label);
+          updateFilterChips();
+          $('#cveTable').DataTable().column(2).search(activeFilters.join("|"), true, false).draw();
+        };
+
+        container.appendChild(span);
+      });
+    }
+
+    let chartInstance = new Chart(document.getElementById('severityChart'), {
+      type: 'pie',
+      data: data,
+      options: {
+        plugins: {
+          legend: {
+            onClick: (e, legendItem, legend) => {
+              const label = legendItem.text;
+              if (activeFilters.includes(label)) {
+                activeFilters = activeFilters.filter(l => l !== label);
+              } else {
+                activeFilters.push(label);
+              }
+              updateFilterChips();
+              $('#cveTable').DataTable().column(2).search(activeFilters.join("|"), true, false).draw();
+            }
+          }
+        },
+        onClick: function (evt, item) {
+          if (item.length > 0) {
+            const label = data.labels[item[0].index];
+            if (activeFilters.includes(label)) {
+              activeFilters = activeFilters.filter(l => l !== label);
+            } else {
+              activeFilters.push(label);
+            }
+            updateFilterChips();
+            $('#cveTable').DataTable().column(2).search(activeFilters.join("|"), true, false).draw();
+          }
+        }
+      }
+    });
+
+    function toggleDescription(element) {
+      console.log('Toggling description for element:', element);
+      if (element.classList.contains('truncated')) {
+        const fullText = element.getAttribute('data-full-text');
+        console.log('Full text:', fullText);
+        if (!fullText) {
+          console.error('No full text found in data-full-text');
+          return;
+        }
+        element.classList.remove('truncated');
+        element.classList.add('full');
+        element.innerHTML = fullText + ' <span class="toggle-link" onclick="toggleDescription(this.parentElement)">Less</span>';
+      } else {
+        const truncatedText = element.textContent.replace(/ Less$/, '').length > 100 ? element.textContent.replace(/ Less$/, '').substring(0, 200) + '...' : element.textContent.replace(/ Less$/, '');
+        console.log('Truncated text:', truncatedText);
+        if (!truncatedText) {
+          console.error('No truncated text available');
+          return;
+        }
+        element.classList.remove('full');
+        element.classList.add('truncated');
+        element.innerHTML = truncatedText + ' <span class="toggle-link" onclick="toggleDescription(this.parentElement)">More</span>';
+      }
+    }
+
+    $(document).ready(function () {
+      const table = $('#cveTable').DataTable({
+        paging: true,
+        searching: true,
+        order: [[2, "desc"]],
+        dom: 'Bfrtip',
+        buttons: [
+          {
+            extend: 'csvHtml5',
+            text: 'Export CSV',
+            filename: 'cve_report',
+            exportOptions: {
+              columns: ':visible',
+              format: {
+                body: function (data, row, column, node) {
+                  const $cell = $('<div>').html(data);
+                  if (column === 1) {
+                    const anchor = $cell.find('a');
+                    const cveId = anchor.text().trim();
+                    const url = anchor.attr('href');
+                    return `=HYPERLINK("${url}", "${cveId}")`;
+                  }
+                  if (column === 5) {
+                    const fullText = $(node).closest('td').attr('data-full');
+                    return fullText ? fullText.trim() : $cell.text().trim();
+                  }
+                  return $cell.text().trim();
+                }
+              }
+            }
+          },
+          {
+            extend: 'pdfHtml5',
+            text: 'Export PDF',
+            filename: 'cve_report',
+            orientation: 'landscape',
+            pageSize: 'A4',
+            customize: function (doc) {
+              const body = doc.content[1].table.body;
+              for (let i = 1; i < body.length; i++) {
+                const cveId = body[i][1].text;
+                const url = `https://nvd.nist.gov/vuln/detail/${cveId}`;
+                body[i][1] = {
+                  text: cveId,
+                  link: url,
+                  color: 'blue',
+                  decoration: 'underline'
+                };
+              }
+            },
+            exportOptions: {
+              columns: ':visible',
+              format: {
+                body: function (data, row, column, node) {
+                  const $cell = $('<div>').html(data);
+                  if (column === 5) {
+                    const fullText = $(node).closest('td').attr('data-full');
+                    return fullText ? fullText.trim() : $cell.text().trim();
+                  }
+                  return $cell.text().trim();
+                }
+              }
+            }
+          },
+          'print'
+        ],
+        columnDefs: [{ targets: '_all', className: 'dt-head-center' }
+        ]
+      });
+
+      $('#clearFilterBtn').on('click', function () {
+        activeFilters = [];
+        updateFilterChips();
+        table.column(2).search("").draw();
+      });
+    });
+  </script>
+</body>
+
+</html>

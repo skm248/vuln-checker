@@ -1,0 +1,15 @@
+LICENSE
+MANIFEST.in
+README.md
+pyproject.toml
+vuln_checker/__init__.py
+vuln_checker/cpes_list.txt
+vuln_checker/main.py
+vuln_checker/requirements.txt
+vuln_checker.egg-info/PKG-INFO
+vuln_checker.egg-info/SOURCES.txt
+vuln_checker.egg-info/dependency_links.txt
+vuln_checker.egg-info/entry_points.txt
+vuln_checker.egg-info/requires.txt
+vuln_checker.egg-info/top_level.txt
+vuln_checker/templates/template.html

@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include ./vuln_checker/requirements.txt
+include ./vuln_checker/products.csv
+recursive-include ./vuln_checker/templates *.html
+include ./vuln_checker/cpes_list.txt

@@ -1,0 +1,11 @@
+charset-normalizer==3.4.1
+idna==3.10
+jinja2==3.1.6
+markupsafe==3.0.2
+packaging==25.0
+requests==2.32.3
+urllib3==1.26.20
+certifi==2025.1.31
+
+[:python_version < "3.11"]
+tomli>=2.0.1
