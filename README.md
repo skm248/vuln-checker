@@ -34,8 +34,8 @@ pip install vuln-checker
 
 ```bash
 git clone https://github.com/skm248/vuln-checker.git
+cd vuln_checker
 pip install -r requirements.txt
-cd vuln-checker
 pip install .
 ```
 
