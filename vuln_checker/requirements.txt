@@ -18,5 +18,5 @@ packaging==25.0
     # via vuln-checker (pyproject.toml)
 requests==2.32.3
     # via vuln-checker (pyproject.toml)
-urllib3==1.26.20
+urllib3==2.6.0
     # via requests
