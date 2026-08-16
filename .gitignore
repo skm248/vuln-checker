@@ -44,3 +44,4 @@ scan_reports/
 
 # Runtime portable binaries
 vuln_checker/bin/
+BUILD.md
