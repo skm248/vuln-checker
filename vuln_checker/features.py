@@ -343,13 +343,14 @@ def normalize_component_name(name):
     name = str(name or "").lower().strip()
     if ":" in name:
         name = name.split(":")[-1]
-    if name.startswith("github.com/"):
+    if "/" in name:
         parts = name.split("/")
-        if len(parts) >= 3:
-            last_part = parts[-1]
-            if re.match(r'^v\d+$', last_part) and len(parts) >= 4:
-                return parts[-2]
-            return last_part
+        if parts[0] == "github.com":
+            if len(parts) >= 3:
+                last_part = parts[-1]
+                if re.match(r'^v\d+$', last_part) and len(parts) >= 4:
+                    return parts[-2]
+                return last_part
     return name
 
 def is_pseudo_version(version_str):

@@ -414,7 +414,7 @@ def safe_parse_version(version_str: str, product_name: str = None):
     
     # Map date-based versions (e.g. 2017-03-17) to a pre-v0.0.0 prefix (0.0.0.20170317)
     # so they compare correctly against standard semver versions like 0.1.0 or 0.54.0.
-    if re.match(r'^(19\d{2}|20\d{2})([-._]?\d+)*$', v):
+    if re.match(r'^(19\d{2}|20\d{2})([-._]?\d+){0,5}$', v):
         clean_date = re.sub(r'[-._]', '.', v)
         v = f"0.0.0.{clean_date}"
     
@@ -561,8 +561,8 @@ def fetch_online_package_license(name: str, vendor: str, version: str, type_str:
                 purl_body = purl.split("?")[0]
                 repo_path = purl_body.replace("pkg:golang/", "").split("@")[0]
             
-            if repo_path.startswith("github.com/"):
-                parts = repo_path.split("/")
+            parts = repo_path.split("/")
+            if parts and parts[0] == "github.com":
                 if len(parts) >= 3:
                     owner = parts[1]
                     repo = parts[2]
