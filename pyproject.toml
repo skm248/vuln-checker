@@ -4,36 +4,42 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vuln-checker"
-version = "0.5.2"
-description = "CLI tool to fetch CVEs using NVD API"
-authors = [{ name = "Sai Krishna Meda", email = "saikrishnameda248@outlook.com" }]
+version = "0.5.6a1"
+authors = [
+  { name="skm248" },
+]
+description = "High-performance CLI CVE vulnerability scanner for servers and SBOMs"
 readme = "README.md"
-license = "MIT"
-requires-python = ">=3.7"
-keywords = ["cve", "vulnerability", "cli", "security", "nvd", "cpe"]
-
+requires-python = ">=3.9"
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+]
 dependencies = [
-    "charset-normalizer==3.4.1",
-    "idna==3.10",
-    "jinja2==3.1.6",
-    "markupsafe==3.0.2",
-    "packaging==25.0",
-    "requests==2.32.4",
-    "urllib3==2.6.3",
-    "certifi==2025.1.31",
-    "tomli>=2.0.1; python_version < '3.11'"
+    "requests>=2.32.4",
+    "packaging>=23.0",
+    "jinja2>=3.1.6",
+    "openpyxl>=3.1.5",
+    "toml>=0.10.2",
+    "tomli>=2.0.1",
+    "tqdm>=4.65.0",
+    "urllib3>=2.6.0",
 ]
 
 [project.scripts]
 vuln-checker = "vuln_checker.main:main"
 
-[tool.setuptools]
-packages = ["vuln_checker"]
-include-package-data = true
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vuln_checker*"]
 
 [tool.setuptools.package-data]
-vuln_checker = [
-  "products.csv",
-  "requirements.txt",
-  "/templates/*.html"
-]
+vuln_checker = ["data/*", "templates/*.html"]
+
+[tool.setuptools]
+include-package-data = true

@@ -1,0 +1,26 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "vulnerabilities": [
+    {
+      "id": "CVE-YYYY-XXXX",
+      "analysis": {
+        "state": "not_affected",
+        "detail": "Fictional example: The vulnerable code path is never triggered by our application configuration."
+      },
+      "affects": [
+        {
+          "ref": "pkg:maven/example-group/example-product@1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "CVE-ZZZZ-WWWW",
+      "analysis": {
+        "state": "false_positive",
+        "detail": "Fictional example: This vulnerability affects a testing-only component that is excluded from production."
+      }
+    }
+  ]
+}

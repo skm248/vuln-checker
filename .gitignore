@@ -1,0 +1,46 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Logs and temporary files
+*.log
+logs/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Project-specific data (cached or ignored)
+nvd_feeds/
+cve_cache.json
+server_inventory.csv
+
+# Reports
+reports/
+vulnerabilities.csv
+vulnerabilities.json
+vulnerabilities.xlsx
+cve_report.html
+
+# Environment
+venv/
+env/
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# Large files & local downloads
+vuln_checker/data/jsrepository.json
+
+# Untracked/Generated scan data
+HelpAI/
+osv_feeds/
+scan_reports/
+
+# Runtime portable binaries
+vuln_checker/bin/

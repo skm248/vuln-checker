@@ -1,0 +1,7 @@
+# cpes_list.txt - Manual CPE mapping for SBOM components
+# Use this file to provide exact CPEs for products that are hard to detect automatically.
+# Format: cpe:2.3:a:vendor:product:version:*:*:*:*:*:*:*
+# One CPE per line. Lines starting with # are comments.
+
+# Example:
+# cpe:2.3:a:jquery:jquery:1.11.3:*:*:*:*:*:*:*

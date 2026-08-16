@@ -1,0 +1,107 @@
+{
+  "libraries": {
+    "jquery": {
+      "filename_pattern": "jquery[-.](([0-9]+\\.){1,3}[0-9]+)(?:\\.min)?\\.js",
+      "content_pattern": "\\*!\\s*jQuery\\s*v(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "jquery",
+      "aliases": ["jquery", "jquery_project"]
+    },
+    "bootstrap": {
+      "filename_pattern": "bootstrap[-.](([0-9]+\\.){1,3}[0-9]+)(?:\\.min)?\\.(?:js|css)",
+      "content_pattern": "\\*!\\s*Bootstrap\\s*v(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "bootstrap",
+      "aliases": ["getbootstrap", "bootstrap_project", "twbs"]
+    },
+    "angular": {
+      "filename_pattern": "angular[-.](([0-9]+\\.){1,3}[0-9]+)(?:\\.min)?\\.js",
+      "content_pattern": "AngularJS\\s*v(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "angularjs",
+      "aliases": ["angularjs", "google", "angular_project"]
+    },
+    "jqueryui": {
+      "filename_pattern": "jquery-ui[-.](([0-9]+\\.){1,3}[0-9]+)(?:\\.min)?\\.js",
+      "content_pattern": "jQuery UI\\s*v(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "jquery",
+      "aliases": ["jquery_ui", "jquery-ui", "jqueryui"]
+    },
+    "axios": {
+      "filename_pattern": "axios[-.](([0-9]+\\.){1,3}[0-9]+)(?:\\.min)?\\.js",
+      "content_pattern": "axios\\s*v(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "axios_project",
+      "aliases": ["axios", "axios_project"]
+    },
+    "jstree": {
+      "filename_pattern": "jstree[-.]([0-9]+\\.[0-9]+\\.[0-9]+)(?:\\.min)?\\.js",
+      "content_pattern": "jsTree\\s*v?([0-9]+\\.[0-9]+\\.[0-9]+)",
+      "vendor": "jstree",
+      "aliases": ["jstree", "jstree-"]
+    },
+    "tailwindcss": {
+      "filename_pattern": "tailwindcss[-.](([0-9]+\\.){1,3}[0-9]+)(?:\\.min)?\\.(?:js|css)",
+      "content_pattern": "Tailwind CSS\\s*v?(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "tailwindcss",
+      "aliases": ["tailwindcss"]
+    },
+    "ckeditor": {
+      "filename_pattern": "ckeditor(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "(?:CKEDITOR\\.version|version)\\s*[:=]\\s*[\"']([0-9.]+)[\"']",
+      "vendor": "ckeditor",
+      "aliases": ["ckeditor"]
+    },
+    "react": {
+      "filename_pattern": "react(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "React\\s*v?([0-9.]+|development)",
+      "vendor": "facebook",
+      "aliases": ["react"]
+    },
+    "dompurify": {
+      "filename_pattern": "dompurify(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "DOMPurify\\s*v?([0-9]+\\.[0-9]+\\.[0-9]+)",
+      "vendor": "cure53",
+      "aliases": ["dompurify"]
+    },
+    "d3": {
+      "filename_pattern": "d3(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "d3\\s*v?(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "d3js",
+      "aliases": ["d3", "d3js"]
+    },
+    "lodash": {
+      "filename_pattern": "lodash(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "(?:lodash\\s*v|_\\.VERSION\\s*=\\s*['\"])([0-9]+\\.[0-9]+\\.[0-9]+)",
+      "vendor": "lodash",
+      "aliases": ["lodash", "lodash_project"]
+    },
+    "moment": {
+      "filename_pattern": "moment(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "(?:moment\\s*v|moment\\.fn\\.version\\s*=\\s*['\"])([0-9]+\\.[0-9]+\\.[0-9]+)",
+      "vendor": "momentjs",
+      "aliases": ["moment", "momentjs"]
+    },
+    "select2": {
+      "filename_pattern": "select2(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.(?:js|css)",
+      "content_pattern": "Select2\\s*v?(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "select2",
+      "aliases": ["select2", "select2_project"]
+    },
+    "highcharts": {
+      "filename_pattern": "highcharts(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "Highcharts\\s*v?(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "highcharts",
+      "aliases": ["highcharts"]
+    },
+    "slick": {
+      "filename_pattern": "slick(?:[-.]([0-9]+\\.[0-9]+\\.[0-9]+))?(?:\\.min)?\\.js",
+      "content_pattern": "slick\\s*v?(([0-9]+\\.){1,3}[0-9]+)",
+      "vendor": "kenwheeler",
+      "aliases": ["slick", "slick-carousel"]
+    }
+  },
+  "default_excludes": [
+    "node_modules",
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__"
+  ]
+}

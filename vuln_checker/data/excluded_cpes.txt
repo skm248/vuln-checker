@@ -1,0 +1,10 @@
+# excluded_cpes.txt - CPEs to exclude from scanning
+# Add one CPE or pattern per line
+# Use * as wildcard (e.g., cpe:2.3:a:vendor:product:*)
+# Lines starting with # are comments
+
+# Example exclusions:
+# cpe:2.3:a:apache:commons-lang:*
+# cpe:2.3:a:junit:junit:*
+# cpe:2.3:a:log4j:log4j:1.*
+cpe:2.3:a:netty:netty:1.2.10:*:*:*:*:*:*:*

@@ -1,0 +1,158 @@
+{
+  "client_broker_mismatch": {
+    "server_concepts": [
+      "broker",
+      "cluster",
+      "zookeeper",
+      "kraft",
+      "mirror maker",
+      "mirror-maker",
+      "connect worker",
+      "replication factor",
+      "scram implementation",
+      "sasl implementation",
+      "authentication algorithm in apache kafka"
+    ],
+    "client_keywords": [
+      "client library",
+      "client-side",
+      "client configuration"
+    ],
+    "client_indicators": [
+      "kafka client",
+      "arbitrary client",
+      "malicious client",
+      "untrusted client"
+    ]
+  },
+  "spring_base_mismatch": {
+    "base_components": [
+      "spring-core",
+      "spring-beans",
+      "spring-aop",
+      "spring-context",
+      "spring-jcl"
+    ],
+    "web_layers": [
+      "spring mvc",
+      "spring webflux",
+      "spring web",
+      "spring security",
+      "spring boot",
+      "spring cloud",
+      "spring data",
+      "spring-web",
+      "spring-security",
+      "spring-boot"
+    ],
+    "core_keywords": [
+      "spel",
+      "expression",
+      "antpathmatcher",
+      "serialization",
+      "deserialization",
+      "utils",
+      "utility",
+      "core",
+      "bean"
+    ]
+  },
+  "netty_module_mismatch": {
+    "base_components": [
+      "netty-common",
+      "netty-buffer",
+      "netty-resolver",
+      "netty-resolver-dns-native-macos",
+      "netty-resolver-dns"
+    ],
+    "codec_handler_terms": [
+      "httpproxyhandler",
+      "lz4framedecoder",
+      "mqttdecoder",
+      "redisencoder",
+      "httprequestencoder",
+      "sslclienthandler",
+      "simpletrustmanager",
+      "http2",
+      "httpobjectdecoder",
+      "httpclientcodec",
+      "httpcontentdecompressor",
+      "delegatingdecompressorframelistener",
+      "defaulthttp2connection",
+      "lz4",
+      "mqtt",
+      "redis",
+      "sctp",
+      "ssl",
+      "proxy",
+      "snappy",
+      "snappyframedecoder",
+      "compression"
+    ],
+    "resolver_only_terms": [
+      "dnsresolver",
+      "dns",
+      "predictable prng"
+    ]
+  },
+  "cve_exclusions": {
+    "CVE-2025-15104": ["8.0.3.Final", "8.0.3.final"]
+  },
+  "subproject_mismatches": {
+    "jline": ["groovy"],
+    "opentelemetry": ["go"],
+    "pdfbox": ["examples", "example"]
+  },
+  "build_vs_runtime_exclusions": {
+    "kotlin": {
+      "keywords": ["build cache", "compiler", "compiler daemon", "incremental compilation"],
+      "runtime_components": ["stdlib", "reflect", "test", "runtime"]
+    }
+  },
+  "log4j_module_mismatch": {
+    "api_components": ["log4j-api", "log4j-to-slf4j"],
+    "core_keywords": [
+      "rfc5424",
+      "xml",
+      "jsontemplate",
+      "syslog",
+      "appender",
+      "bridge",
+      "crlf",
+      "expression language"
+    ],
+    "api_indicators": [],
+    "core_only_phrases": [
+      "affects log4j core",
+      "in apache log4j core",
+      "jsontemplatelayout"
+    ],
+    "api_exclusion_phrases": [
+      "affects log4j api",
+      "in apache log4j api"
+    ]
+  },
+  "standalone_apps": [
+    "prometheus",
+    "nginx",
+    "mysql",
+    "apache",
+    "redis",
+    "loki"
+  ],
+  "standalone_extensions": {
+    "nginx": ["nginx-ui", "nginx ui", "nginx management suite", "nginx instance manager", "nginx connectivity manager", "nginx ingress controller", "nginx-ingress-controller", "nginx proxy manager", "nginx-proxy-manager"],
+    "redis": ["redis-commander", "redis commander", "redis desktop manager", "redis-desktop-manager", "redisinsight", "redis-insight"],
+    "prometheus": ["prometheus-operator", "prometheus operator", "prometheus-exporter", "prometheus exporter", "node-exporter", "node_exporter"],
+    "loki": ["loki-simple-scalable"]
+  },
+  "edition_exclusivity": {
+    "nginx": {
+      "restricted_terms": ["nginx plus", "nginx-plus"],
+      "allowed_terms": ["nginx oss", "nginx open source"]
+    }
+  },
+  "product_normalizations": {
+    "nginx": ["nginx", "nginx open source", "nginx oss"]
+  }
+}

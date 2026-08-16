@@ -1,261 +1,237 @@
 Metadata-Version: 2.4
 Name: vuln-checker
-Version: 0.5.2
-Summary: CLI tool to fetch CVEs using NVD API
-Author-email: Sai Krishna Meda <saikrishnameda248@outlook.com>
-License-Expression: MIT
-Keywords: cve,vulnerability,cli,security,nvd,cpe
-Requires-Python: >=3.7
+Version: 0.5.6.8
+Summary: High-performance CLI CVE vulnerability scanner for servers and SBOMs
+Author: skm248
+Classifier: Environment :: Console
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Topic :: Security
+Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: charset-normalizer==3.4.1
-Requires-Dist: idna==3.10
-Requires-Dist: jinja2==3.1.6
-Requires-Dist: markupsafe==3.0.2
-Requires-Dist: packaging==25.0
-Requires-Dist: requests==2.32.3
-Requires-Dist: urllib3==1.26.20
-Requires-Dist: certifi==2025.1.31
-Requires-Dist: tomli>=2.0.1; python_version < "3.11"
+Requires-Dist: requests>=2.32.4
+Requires-Dist: packaging>=23.0
+Requires-Dist: jinja2>=3.1.6
+Requires-Dist: openpyxl>=3.1.5
+Requires-Dist: toml>=0.10.2
+Requires-Dist: tomli>=2.0.1
+Requires-Dist: tqdm>=4.65.0
+Requires-Dist: urllib3>=2.6.0
 Dynamic: license-file
 
-# vuln-checker
+```text
+██╗   ██╗██╗   ██╗██╗     ███╗   ██╗         ██████╗██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ 
+██║   ██║██║   ██║██║     ████╗  ██║        ██╔════╝██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+██║   ██║██║   ██║██║     ██╔██╗ ██║ ██████╗██║     ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝
+╚██╗ ██╔╝██║   ██║██║     ██║╚██╗██║ ╚═════╝██║     ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+ ╚████╔╝ ╚██████╔╝███████╗██║ ╚████║        ╚██████╗██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║
+  ╚═══╝   ╚═════╝ ╚══════╝╚═╝  ╚═══╝         ╚══════╝╚═╝  ╚═╝╚══════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+                           [ LOCAL & OFFLINE VULNERABILITY SCANNER ]
+```
 
 [![PyPI version](https://img.shields.io/pypi/v/vuln-checker?color=brightgreen)](https://pypi.org/project/vuln-checker/)
-![Python](https://img.shields.io/badge/python-3.11.0-blue)
+![Python](https://img.shields.io/badge/python-3.9+-blue?logo=python&logoColor=white)
 [![CodeQL](https://github.com/skm248/vuln-checker/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/skm248/vuln-checker/actions/workflows/github-code-scanning/codeql)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/skm248/vuln-checker?style=social)](https://github.com/skm248/vuln-checker/stargazers)
 
-> ✨ A CLI tool to search CVEs from the NVD API based on product/version (CPE lookup).
-
----
-
-## Features
-
-- 🎯 Interactive mode to resolve multiple CPE matches
-- 🔍 Filter CVEs by severity (LOW, MEDIUM, HIGH, CRITICAL)
-- 💾 Export results in JSON, CSV, or HTML formats
-- 🌐 Includes hyperlinks for CVE IDs in JSON, CSV, and HTML outputs
-- 📋 Batch processing with CSV input or command-line product/version pairs
-- ⚡ Requires NVD API key for enhanced access (rate limits apply)
-- 🚀 Supports pagination for comprehensive CVE retrieval
+**vuln-checker** is an enterprise-grade, high-performance CLI vulnerability scanner that maps software components to CVEs using local NVD feeds. It offers native offline scanning capabilities for packages, CycloneDX SBOMs, and server environments without requiring persistent internet connections or hitting API rate limits.
 
 ---
 
-## Installation
+## 🌟 Key Features
 
-**Install via pip:**
+*   **Offline NVD Mirroring**: Seamlessly downloads and mirrors NVD data feeds locally for lightning-fast, rate-limit-free offline scans.
+*   **Multi-Mode Scan Capabilities**:
+    *   **Server Scan (`--scan-server`)**: Discovers installed system packages (dpkg, rpm) and library ecosystems (pip, npm, maven) across your system.
+    *   **Directory Scan (`--scan-dir SCAN_DIR`)**: Recursively audits a target directory, codebase, or offline installation folder for packages, lockfiles, and archives.
+    *   **CycloneDX SBOM Parser (`--sbom`)**: Evaluates software components in CycloneDX-JSON formats with robust package URL (`purl`) matching.
+    *   **Ad-Hoc Products (`--products`)**: Quick check for specific packages and versions directly via CLI.
+    *   **Batch CSV Processing (`--input-csv`)**: Scans custom server inventories in bulk.
+*   **Advanced Categorized Reporting (New)**:
+    - **Multi-Tab HTML Dashboards**: Rich, responsive interface containing severity counts (Chart.js), real-time search, and interactive markdown descriptions.
+    - **Multi-Sheet Excel Reports**: High-fidelity workbooks with auto-filters, bold headers, auto-wrap text, and clickable hyperlink references.
+    - **Strict Deduplication**: Consolidates findings to list each issue exactly once with all detected paths merged.
+    - **Conditional Layout Suppression**: Tabs and Excel sheets are created conditionally **only if** they contain relevant findings, keeping outputs pristine.
+*   **False Positive Mitigation**: Suppress benign or non-applicable advisories using standard VEX (Vulnerability Exploitability eXchange) mappings or simple exclusion files (`excluded_cpes.txt`).
 
+---
+
+## 📂 Report Categorization Engine
+
+All vulnerability findings are parsed and organized into five dedicated, mutually exclusive categories:
+
+1.  **📦 Jars / War / Zip**: Java ecosystem archives, nested packages, and archive dependencies.
+2.  **🟢 Npm Audit**: Node.js ecosystem packages (`node_modules`).
+3.  **🔴 RetireJS**: Frontend JavaScript libraries and client-side assets.
+4.  **🐍 Pip-Audit**: Python packages and virtual environment dependencies.
+5.  **🐧 OS & System Packages**: Operating system level packages (Debian/RPM).
+
+> [!NOTE]
+> **Conditional Tab Suppression**: If a category has zero findings, it is automatically omitted from both HTML dashboards and Excel workbooks to avoid clutter.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Installation
+
+Install the stable release via pip:
 ```bash
 pip install vuln-checker
 ```
 
-**Or from GitHub:**
-
+### 2. Mirror NVD Feeds (Required on first execution)
+Download and mirror NVD data feeds locally (covers 2002 to present):
 ```bash
-git clone https://github.com/skm248/vuln-checker.git
-pip install -r requirements.txt
-cd vuln-checker
-pip install .
+vuln-checker --update-feeds
 ```
 
-## Usage
-**Prerequisites:**
-1.    Obtain an NVD API key from https://nvd.nist.gov/developers/request-an-api-key and set it as an environment variable NVD_API_KEY or replace the placeholder in the script. Follow these steps to request a key:
-      - Open your preferred web browser and navigate to https://nvd.nist.gov/developers/request-an-api-key.
-      - On the NVD - Request an API Key page, complete the following fields: 
-2.	Organization Name: Enter the name of your organization.
-3.	Email Address: Provide a valid business email address.
-4.	Organization Type: Select the type that best represents your organization from the dropdown menu.
-       - Carefully read and understand the NVD - Terms of Use section.
-       - Scroll to the bottom of the Terms of Use and check the "I agree to the Terms of Use" checkbox to accept the agreement.
-       - Click the submit button to send your request.
-       - Check your email (including spam/junk folders) for a message from NVD containing a single-use activation hyperlink. This email is sent to the address provided.
-        - Click the hyperlink within seven days to activate and view your API key. If not activated within this period, you must submit a new request.
-        - Set the `NVD_API_KEY` environment variable using one of the following methods based on your operating system:
+### 3. Usage Examples
 
-#### Windows (Command Prompt)
-**Temporary (Current Session):**
-1. Open Command Prompt.
-2. Run the following command, replacing `your_actual_api_key` with your NVD API key:
-   ```cmd
-      set NVD_API_KEY=your_actual_api_key
-   ```
-   - Note: The variable is unset when the Command Prompt window is closed.
+**Scan a Target Directory (e.g. Codebase or Installation Folder):**
+```bash
+vuln-checker --scan-dir /var/www/my_app --format html,excel --output reports/scan_report
+```
+*Recursively gathers nested libraries, manifests, and archives in `/var/www/my_app` and audits them against local feeds.*
 
-**Persistent (All Future Sessions):**
-1. Open "System Properties":
-2. Right-click 'This PC' → 'Properties' → 'Advanced system settings' → 'Environment Variables'.
-3. In the "User variables" or "System variables" section, click "New" or edit an existing NVD_API_KEY variable.
-4. Set the Variable name to NVD_API_KEY and the Variable value to your_actual_api_key.
-5. Click "OK" to save, then close all dialog boxes.
-6. Open a new Command Prompt and verify with 
-   ```cmd
-      echo %NVD_API_KEY%
-   ```
-7. Run the script in the new session.
+**Full System Scan with Real-time Network Threat Mapping:**
+```bash
+vuln-checker --scan-server --fast-agent --format html --output reports/full_audit
+```
+*Scans all system packages and maps discovered vulnerabilities to active listening ports via Linux procfs.*
 
-#### Windows (PowerShell)
-**Temporary (Current Session):**
-1. Open PowerShell.
-2. Run the following command, replacing your_actual_api_key with your NVD API key: 
-   ```cmd
-      $env:NVD_API_KEY = "your_actual_api_key"
-   ```
-3. Run the script in the same PowerShell session:
-   ```cmd
-      python main.py --products "jquery:1.11.3,1.11.5" --format json
-   ```
-   - Note: The variable is unset when the PowerShell session is closed.
+**Zero-Dependency Offline Scan (Bypass Syft):**
+```bash
+vuln-checker --scan-dir /opt/my_service --native-only --format html --output reports/native_scan
+```
+*Performs directory auditing using built-in, lightweight Python package collectors, ignoring external tools.*
 
-**Persistent (All Future Sessions):**
-1. Open PowerShell with administrative privileges.
-2. Run the following command, replacing your_actual_api_key with your NVD API key:
-   ```cmd
-       [Environment]::SetEnvironmentVariable("NVD_API_KEY", "your_actual_api_key", "User")
-   ```
-   - Use "Machine" instead of "User" for system-wide persistence (requires admin rights).
-3. Open a new PowerShell session and verify with 
-   ```bash
-      $env:NVD_API_KEY
-   ```
-4. Run the script in the new session.
+**Scan a CycloneDX SBOM Document:**
+```bash
+vuln-checker --sbom sbom.json --fast --format html --output report.html
+```
 
-#### Linux/macOS (Terminal)
-**Temporary (Current Session):**
-1. Open a terminal.
-2. Run the following command, replacing your_actual_api_key with your NVD API key:
-   ```bash
-      export NVD_API_KEY=your_actual_api_key
-   ```
-3. Run the script in the same terminal session:
-   ```bash
-      python main.py --products "lodash:3.5.0" --format json
-   ```
-   - Note: The variable is unset when the terminal session is closed.
+**Evaluate specific packages from CLI:**
+```bash
+vuln-checker --products "jquery:1.11.3 lodash:3.5.0" --severity High,Critical
+```
 
-#### Persistent (All Future Sessions):
-1. Open a terminal and edit your shell configuration file:
-      - For Bash: nano ~/.bashrc or nano ~/.bash_profile
-      - For Zsh: nano ~/.zshrc
-2. Add the following line at the end, replacing your_actual_api_key with your NVD API key:
-   ```bash
-      export NVD_API_KEY=your_actual_api_key
-   ```
-3. Save the file and exit (e.g., Ctrl+O, Enter, Ctrl+X in nano).
-4. Apply the changes by running:
-   ```bash
-      source ~/.bashrc  # or source ~/.bash_profile or source ~/.zshrc
-   ```
-5. Verify with 
-   ```bash
-      echo $NVD_API_KEY.
-   ```
-6. Run the script in the same or a new terminal session.
-     - After setting the environment variable, run the script. If the key is not detected, the script will prompt for manual input.
+---
 
+## 🔧 CLI Options Reference
 
-#### Command-Line Options
-   ```bash
-      vuln-checker-help
-   ```
-**Examples:**
-1. Single Product via Command-Line:
-   ```bash
-      vuln-checker --products "jquery:1.11.3,1.11.5 lodash:3.5.0" --format html --output custom_report.html
-   ```
-      - Fetches CVEs for multiple products/versions provided as a comma-separated list.
+The scanner supports the following command-line flags, grouped by function:
 
-2. Batch Processing with CSV: 
-     - Create a products.csv file with the following format:
+### 🖥️ Scan Modes (Mutually Exclusive - choose one)
+| Flag | Arguments | Description |
+| :--- | :--- | :--- |
+| `--scan-dir` | `<dir_path(s)>` | Recursively scans specific directories or mount points for packages, JARs, and manifests. |
+| `--scan-server` | None | Scans the host system (Debian/RPM, python site-packages, npm, maven, etc.). |
+| `--sbom` | `<file_path>` | Scans a CycloneDX SBOM JSON document. |
+| `--products` | `"<name>:<ver> ..."` | Audits space-separated product name and version pairs directly from command line. |
+| `--input-csv` | `<file_path>` | Scans a bulk list of products and versions from a CSV spreadsheet. |
+| `--cpes-file` | `<file_path>` | Audits a list of raw CPE identifiers from a flat text file. |
 
-          products,versions\
-          jquery,1.11.3,1.11.5\
-          lodash,3.5.0
-     - Run:
-       ```bash
-          vuln-checker --input-csv products.csv --format csv --output output.csv
-       ```
-     - Processes all product/version pairs from the CSV.
+### ⚙️ Performance & Advanced Controls
+| Flag | Arguments | Description |
+| :--- | :--- | :--- |
+| `--native-only` | None | Bypasses all external analysis tools (like Syft/Retire.js) and runs native Python package collectors. |
+| `--fast-agent` | None | Maps vulnerabilities to active listening ports and PIDs on the host system in real-time. |
+| `--fast` | None | Enables fast mode using concurrent workers and cached results. |
+| `--max-workers`| `<number>` | Number of concurrent workers to process findings. |
+| `--baseline` | `<file_path>` | Compares current findings with a previous JSON report to generate a **Delta Report**. |
+| `--vex-file` | `<file_path>` | Filters out false-positive CVEs by importing standard Vulnerability Exploitability eXchange (VEX) files. |
 
-3. Filter by Severity: 
-   ```bash
-      vuln-checker --products "jquery:1.11.3,1.11.5" --severity critical,high --format json --output output.json
-   ```
-      - Filters CVEs with HIGH severity only.
+### 📂 Output & Customization
+| Flag | Arguments | Description |
+| :--- | :--- | :--- |
+| `--format` | `json,csv,html,excel` | Comma-separated list of formats to generate (default: `json`). |
+| `--output` | `<file_path>` | Prefix or output filename for the report. |
+| `--severity` | `Low,Medium,High,Critical` | Filters findings by severity levels. |
+| `--config` | `<file_path>` | Loads configuration values from a custom TOML config file. |
+| `--log-level` | `DEBUG,INFO,WARNING,ERROR` | Controls terminal logging verbosity (default: `INFO`). |
 
-4.	Specify Output File: 
-    ```bash
-       vuln-checker --input-csv products.csv --format html --output custom_report.html
-    ```
-       - Saves the report to a custom file name.
+### 🔄 Feed & Cache Management
+| Flag | Arguments | Description |
+| :--- | :--- | :--- |
+| `--update-feeds` | None | Downloads and mirrors NVD JSON vulnerability feeds locally. |
+| `--force-update` | None | Forces re-download of all feeds even if they are fresh. |
+| `--feed-dir` | `<dir_path>` | Custom directory for local NVD feed files. |
+| `--start-year` | `<year>` | Overrides default start year (2002) for NVD vulnerability feeds. |
 
+---
 
-## 📦 New Features
-**--version**
+## ⚙️ Configuration (`config.toml`)
 
-You can now check the current installed version of the vuln-checker tool using:
+Customize scan options, cache duration, worker threads, and paths using a local `config.toml` file:
 
-   ```bash
-      vuln-checker --version
-   ```
-   - This fetches the version directly from the pyproject.toml file, ensuring consistency with your package metadata.
+```toml
+[feeds]
+feed_dir = "nvd_feeds"
+start_year = 2002
+max_age_hours = 24
 
-**--upgrade**
-Easily upgrade to the latest version of vuln-checker from PyPI using:
+[cache]
+cache_file = "cve_cache.json"
+enabled = true
 
-  ```bash
-      vuln-checker --upgrade
-  ```
+[server_scan]
+max_workers = 8
 
-This command will:
-1. Check the latest available version on PyPI.
-2. Compare it with your currently installed version.
-3. Only upgrade if a newer version is available.
+[output]
+output_dir = "reports"
+formats = ["json", "csv", "html", "excel"]
+```
 
-To auto-confirm the upgrade (without a prompt), use the --yes flag:
+Run scans utilizing your custom config:
+```bash
+vuln-checker --config config.toml --scan-server
+```
 
-  ```bash
-      vuln-checker --upgrade --yes
-  ```
-⚠️ If you already have the latest version installed, the tool will skip the upgrade.
+### Suppressing False Positives
+You can suppress benign, non-applicable, or mis-mapped advisories using two local text files (looking first in the current working directory, then in the package's `data/` folder):
 
-#### Arguments
-      --input-csv INPUT_CSV         Path to CSV file with 'product' and 'version' columns
-      --products PRODUCTS           Product/version mapping. Supports one or multiple products and versions. E.g., 'jquery:1.11.3,1.11.5 lodash:3.5.0,3.59'
-      --cpes-file CPES_FILE         Optional path to a text file with CPEs (used to avoid NVD lookup if matched)
-      --severity SEVERITY           Filter by comma-separated severities (e.g. LOW,HIGH,CRITICAL)
-      --format {json,csv,html}      Output format
-      --output OUTPUT               Output filename (e.g. report.html, results.csv, output.json)
-      --version                     Show tool version
-      --upgrade                     Upgrade vuln-checker to the latest version on PyPI
-      --yes                         Auto-confirm prompts like upgrade confirmation
+#### 1. Global CPE Exclusions (`excluded_cpes.txt`)
+Populate it with target CPEs to suppress them entirely from reports. Supports prefix wildcard matching (`*`):
+```text
+# Ignore all vulnerabilities in a specific product
+cpe:2.3:a:apache:commons-lang:*
 
-### Notes
-1. Exactly one of --input-csv or --products must be provided.
-2. Hyperlinks in CSV are formatted as Excel =HYPERLINK formulas, and in JSON as a dictionary with url and value fields.
-3. The tool includes a 0.5-second delay between API requests to respect NVD rate limits.
-____
+# Ignore a specific library version
+cpe:2.3:a:junit:junit:4.12
+```
 
-### MIT License
+#### 2. Core Application Isolation (`core_apps.txt`)
+To prevent client-side libraries (like `example-connector-java` or `my-client-library`) from matching core server/database CPEs (like `example_db:example_db` or `my-server:my-server`), add the server product name to this file. 
+The package includes built-in defaults (`example_db`, `my-server`, etc.), but you can override or append additional apps:
+```text
+# Add one product name per line
+custom-db
+another-server
+```
 
-Copyright (c) 2025 Sai Krishna Meda
+---
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 📊 Report Formats
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+| Format | Features & Highlights |
+| :--- | :--- |
+| **HTML** | Dynamic HTML5 interactive dashboard, Chart.js pie charts, global/local DataTables filters, markdown parsing, and tabbed categories. |
+| **Excel** | Multi-sheet auto-filtered workbook, formatted text-wrap, hyperlinked CVEs, and automatic descending severity sorting. |
+| **CSV** | Streamlined flat CSV output utilizing standard `=HYPERLINK` formulas for NVD reference links. |
+| **JSON** | Full structured JSON telemetry suited for CI/CD pipeline automation and ingestion. |
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+---
+
+## 📋 Requirements
+- Python **3.9** or newer
+- Dependencies: `requests`, `packaging`, `jinja2`, `openpyxl`, `toml`, `tomli`, `tqdm`.
+
+---
+
+## ⚖️ License
+Distributed under the MIT License. See `LICENSE` for details.

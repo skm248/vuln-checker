@@ -1,0 +1,13 @@
+[
+  {
+    "id": "CVE-YYYY-XXXX",
+    "state": "not_affected",
+    "component": "example-component",
+    "notes": "Fictional example: Our implementation does not call the affected uncontrolled resource consumption methods."
+  },
+  {
+    "id": "CVE-ZZZZ-WWWW",
+    "state": "false_positive",
+    "notes": "Fictional example: Global suppression of this vulnerability since it is not applicable to any of our environments."
+  }
+]

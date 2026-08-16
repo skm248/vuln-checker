@@ -1,0 +1,8 @@
+# products.csv - Bulk product scan input
+# Headers: product,version
+# You can use name:version or vendor:product formats.
+product,version
+# Example entries:
+# jquery,1.11.3
+# lodash,4.17.21
+# apache:http_server,2.4.41

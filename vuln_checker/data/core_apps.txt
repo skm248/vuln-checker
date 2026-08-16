@@ -1,0 +1,40 @@
+# core_apps.txt - Core applications/servers to isolate from client libraries.
+# Add one product name per line (lowercase).
+#
+# If a package (like a Java JAR, NPM package, or Python package) contains 
+# a sub-component matching one of these products (e.g. database-connector-java 
+# or server-client), the scanner will block generating the generic core server 
+# CPE (e.g. database:database or server:server). This prevents client libraries
+# from inheriting server-level CVEs (like buffer overflows or daemon XSS).
+#
+# If the actual package name is a 100% match (e.g. a real database or server program),
+# the scanner will still perform the audit fully.
+
+prometheus
+mysql
+postgresql
+redis
+elasticsearch
+mongodb
+nginx
+apache
+mariadb
+sqlite
+memcached
+rabbitmq
+kafka
+cassandra
+influxdb
+neo4j
+couchdb
+tomcat
+haproxy
+traefik
+caddy
+zookeeper
+consul
+etcd
+loki
+promtail
+grafana
+node_exporter
